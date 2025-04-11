@@ -68,3 +68,17 @@ CREATE TABLE bronze.erp_px_cat_g1v2(
 	subcat NVARCHAR (50),
 	maintenance NVARCHAR (50)
 );
+
+--- We load the .csv file into the table with BULK INSERT
+BULK INSERT bronze.crm_cust_info
+FROM 'C:\Users\franc\Desktop\Data Analysis\Projects\sql-data-warehouse-project\sql-data-warehouse-project\datasets\source_crm\cust_info.csv'
+WITH (
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	TABLOCK
+);
+
+--- We check the table, if the columns are not shifted.
+SELECT * FROM name_table
+--- We check if the row number matches.
+SELECT COUNT (*) FROM name_table
