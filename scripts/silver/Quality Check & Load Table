@@ -4,7 +4,9 @@ Data Cleaning
 Data Standardization
 ========================================
 
-
+--- Remove unwanted spaces: TRIM()
+--- Data standardization: name changing and user-frendly normalization. UPPER() to ensure to not skip the lowercase letter. Handling missing data by adding a default value ("Unknown")
+--- Remove Duplicates: pick only one record each entity by identifying and ranking the rows (ROW_NUMER) by relevance (in this case the newest information): OVER(PARTITION BY) AS
 
 INSERT INTO silver.crm_cust_info (
 cst_id,
@@ -35,4 +37,4 @@ FROM(
 	ROW_NUMBER () OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) as flag_last
 	FROM bronze.crm_cust_info
 	WHERE cst_id IS NOT NULL
-)temp WHERE flag_last = 1
+)temp WHERE flag_last = 1 --- Select the most recent record per customer
