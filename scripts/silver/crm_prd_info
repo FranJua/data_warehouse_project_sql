@@ -1,3 +1,16 @@
+========================================
+Load Silver Table .crm_prd_info
+Data Cleaning
+Data Standardization
+Date Enrichment
+========================================
+
+--- Creation of the new column cat_id
+--- Handling missin information: ISNULL
+--- Data Normalization
+--- Data Casting
+--- Data enrichment: calculate end date as one day before the next start day 
+
 INSERT INTO silver.crm_prd_info(
 		prd_id,
 		cat_id,
