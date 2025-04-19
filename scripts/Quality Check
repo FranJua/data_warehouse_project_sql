@@ -112,3 +112,44 @@ REPLACE(cid, '-', '') cid,
 cntry
 FROM bronze.erp_loc_a101 WHERE REPLACE(cid, '-', '') NOT IN
 (SELECT cst_key FROM silver.crm_cust_info)
+
+
+--- After joining a table, always check if any duplicates were introduced by the join logic
+SELECT cst_id, COUNT(*) FROM
+(SELECT
+	ci.cst_id,
+	ci.cst_key,
+	ci.cst_firstname,
+	ci.cst_lastname,
+	ci.cst_marital_status,
+	ci.cst_gndr,
+	ci.cst_create_date,
+	ca.bdate,
+	ca.gen,
+	la.cntry
+FROM silver.crm_cust_info AS ci
+LEFT JOIN silver.erp_cust_az12 AS ca
+ON	      ci.cst_key = ca.cid
+LEFT JOIN silver.erp_loc_a101 la
+ON		  ci.cst_key = la.cid
+)temp GROUP BY cst_id
+HAVING COUNT(*) > 1;
+
+--- Data integration with COALESCE: gender Customer in Gold Layer
+SELECT
+	ci.cst_id,
+	ci.cst_key,
+	ci.cst_firstname,
+	ci.cst_lastname,
+	ci.cst_marital_status,
+	CASE WHEN ci.cst_gndr != 'Unknown' THEN ci.cst_gndr
+		 ELSE COALESCE(ca.gen, 'Unknown')
+		 END AS new_gndr,
+	ci.cst_create_date,
+	ca.bdate,
+	la.cntry
+FROM silver.crm_cust_info AS ci
+LEFT JOIN silver.erp_cust_az12 AS ca
+ON	      ci.cst_key = ca.cid
+LEFT JOIN silver.erp_loc_a101 la
+ON		  ci.cst_key = la.cid
